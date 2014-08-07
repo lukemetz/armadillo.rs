@@ -21,3 +21,9 @@
 *.app
 *.rlib
 target
+
+# Cargo
+Cargo.lock
+
+# Generated
+src/gen_*
