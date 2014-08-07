@@ -63,7 +63,6 @@ impl Mat {
       Mat::new_from_raw(arma_Mat_f32_randu(rows as c_uint, cols as c_uint))
     }
   }
-
   /// Index the matrix by row and column
   pub fn at(&self, row : uint, col : uint) -> f32 {
     unsafe {
@@ -127,8 +126,6 @@ impl MathWithMat for Mat {
 
   fn do_div(&self, mat : &Mat) -> Mat{
     unsafe {
-      println!("Doing div {}", self)
-      println!("Mat2 {}", mat);
       Mat::new_from_raw(arma_Mat_f32_div_Mat_f32(mat.raw, self.raw))
     }
   }
@@ -172,7 +169,6 @@ impl fmt::Show for Mat {
   fn fmt(&self, formatter: &mut fmt::Formatter) -> Result<(), fmt::FormatError> {
     unsafe {
       let c_str = arma_Mat_f32_print(self.raw);
-      println!("{:?}", c_str);
       let string = String::from_str(CString::new(c_str, false).as_str().unwrap());
       write!(formatter, "Mat{{shape:({}, {})\n {}\n}}", 0i, 0i, string)
     }
@@ -221,6 +217,9 @@ mod test {
     let ones = Mat::ones(10, 20);
     let new = ones + 1f32;
     assert_eq!(2f32, new.at(9,15));
+    let second = new + 1f32;
+    assert_eq!(3f32, second.at(9,15));
+    assert_eq!(2f32, new.at(9,15));
   }
 
   #[test]
@@ -263,18 +262,18 @@ mod test {
   #[test]
   fn mat_div_mat() {
     let ones = Mat::ones(10, 10)+1f32;
-    let other = Mat::ones(10, 10)+100f32;
+    let other = Mat::ones(10, 10)+3f32;
     println!("{}", ones);
     println!("{}", other);
     let new = ones / other;
-    assert_eq!(0.5f32, new.at(9,15));
+    assert_eq!(0.5f32, new.at(9,4));
   }
 
   #[test]
   fn mat_mul_mat() {
-    let ones = Mat::ones(10, 10);
-    let other = Mat::eye(10, 10) + 1f32;
+    let ones = Mat::ones(10, 10) + 2f32;
+    let other = Mat::ones(10, 10) + 1f32;
     let new = ones * other;
-    assert_eq!(2f32, new.at(9,15));
+    assert_eq!(6f32, new.at(9,4));
   }
 }
