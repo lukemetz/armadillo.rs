@@ -12,7 +12,7 @@ use libc::{c_uint, c_char, c_float, c_double};
 pub struct Matf32Raw;
 pub struct Mat64Raw;
 
-#[link(name = "carmadillo")]//, kind = "static")]
+#[link(name = "carmadillo")]
 #[link(name = "armadillo")]
 """
 
