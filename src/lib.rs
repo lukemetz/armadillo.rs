@@ -226,21 +226,21 @@ mod test {
   fn mat_sub_f32() {
     let ones = Mat::ones(10, 20);
     let new = ones - 1f32;
-    assert_eq!(0f32, new.at(9,15));
+    assert_eq!(0f32, new.at(9,9));
   }
 
   #[test]
   fn mat_div_f32() {
     let ones = Mat::ones(10, 20);
     let new = ones / 4f32;
-    assert_eq!(0.25f32, new.at(9,15));
+    assert_eq!(0.25f32, new.at(9,9));
   }
 
   #[test]
   fn mat_mul_f32() {
     let ones = Mat::ones(10, 20);
     let new = ones * 4f32;
-    assert_eq!(4f32, new.at(9,15));
+    assert_eq!(4f32, new.at(9,9));
   }
 
   #[test]
@@ -248,7 +248,7 @@ mod test {
     let ones = Mat::ones(10, 20);
     let other = Mat::ones(10, 20);
     let new = ones + other;
-    assert_eq!(2f32, new.at(9,15));
+    assert_eq!(2f32, new.at(9,9));
   }
 
   #[test]
@@ -256,7 +256,7 @@ mod test {
     let ones = Mat::ones(10, 10);
     let other = Mat::ones(10, 10);
     let new = ones - other;
-    assert_eq!(0f32, new.at(9,15));
+    assert_eq!(0f32, new.at(9,9));
   }
 
   #[test]
