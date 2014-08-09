@@ -114,7 +114,7 @@ rust_members_template = """
     pub fn arma_Mat_{t[0]}_{member}(m : {struct}) -> c_uint;"""
 
 
-output = "// ==== Auto generated! Do not edit! Modify gen_armadillo.cpp to remake====="
+output = "// ==== Auto generated! Do not edit! Modify make_generated.py to remake====="
 rust_out = output;
 output += header
 rust_out += rust_header;
