@@ -44,13 +44,13 @@ fill_template = """
 rust_fill_template = """
     pub fn arma_Mat_{t[0]}_{fill}(r : c_uint, c : c_uint) -> {struct};"""
 
-op_self_kinds = [("add", "+"), ("sub", "-"), ("mul", "%"), ("div", "/")]
+op_self_kinds = [("add", "+"), ("sub", "-"), ("mul", "%"), ("div", "/"), ("dot", "*")]
 op_self_template = """
   Mat_{t[0]} * arma_Mat_{t[0]}_{op[0]}_Mat_{t[0]}(Mat_{t[0]} * m, Mat_{t[0]} * n) {{
     arma::Mat<{t[1]}> m_mat(m->data, m->n_rows, m->n_cols, false);
     arma::Mat<{t[1]}> n_mat(n->data, n->n_rows, n->n_cols, false);
-    {t[1]} * data = static_cast<{t[1]}*>(malloc(sizeof({t[1]}) * m->n_rows * m->n_cols));
-    arma::Mat<{t[1]}> res(data, m->n_rows, m->n_cols, false);
+    {t[1]} * data = static_cast<{t[1]}*>(malloc(sizeof({t[1]}) * m->n_rows * n->n_cols));
+    arma::Mat<{t[1]}> res(data, m->n_rows, n->n_cols, false);
     res = m_mat {op[1]} n_mat;
     return new Mat_{t[0]}(res);
   }}

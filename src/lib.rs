@@ -79,9 +79,24 @@ impl Mat {
     }
   }
 
+  /// Perform traditional matrix multiplication, or a bunch of dot products.
+  ///
+  /// # Failure
+  ///
+  /// Fails if matrix sizes are incompatible
+  pub fn dot(&self, mat : &Mat) -> Mat {
+    let (ra, ca) = self.shape;
+    let (rb, cb) = mat.shape;
+    if (ca != rb) {
+        fail!(format!("Cannot multiply matrices of shape: {} and {}", self.shape, mat.shape));
+    }
+    unsafe {
+      Mat::new_from_raw(arma_Mat_f32_dot_Mat_f32(self.raw, mat.raw))
+    }
+  }
 }
 
-/// Trait to enable operations with matrix
+/// Trait to enable operation overloading with Mat
 pub trait MathWithMat {
   fn do_add(&self, mat : &Mat) -> Mat;
   fn do_sub(&self, mat : &Mat) -> Mat;
@@ -285,6 +300,23 @@ mod test {
     let other = Mat::ones(10, 10) + 1f32;
     let new = ones * other;
     assert_eq!(6f32, new.at((9,4)));
+  }
+
+  #[test]
+  fn mat_dot() {
+    let eye = Mat::eye(3, 5) * 3.0f32;
+    let other = Mat::ones(5, 1);
+    let result = eye.dot(&other);
+    assert_eq!(result.shape, (3u, 1u));
+    assert_eq!(result.at((0,0)), 3.0f32);
+  }
+
+  #[test]
+  #[should_fail]
+  fn mat_dot_invalid_sizes() {
+    let eye = Mat::eye(3, 5) * 3.0f32;
+    let other = Mat::ones(6, 1);
+    let _ = eye.dot(&other);
   }
 
   #[test]

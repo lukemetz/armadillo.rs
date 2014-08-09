@@ -1,6 +1,6 @@
 CC ?= gcc
 CXX ?= g++
-CXXFLAGS = -fPIC -O3
+CXXFLAGS = -fPIC -O3 -larmadillo
 # quickly try and get the right python version
 PYTHON ?= $(shell [ `which python2` ] && echo python2 || echo python)
 
