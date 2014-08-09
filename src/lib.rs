@@ -15,7 +15,6 @@ mod gen_ffi;
 
 pub struct Mat {
   raw : *mut Matf32Raw,
-  //TODO do some checking on shape
   shape : (uint, uint)
 }
 
@@ -132,24 +131,36 @@ impl MathWithMat for f32 {
 
 impl MathWithMat for Mat {
   fn do_add(&self, mat : &Mat) -> Mat{
+    if (self.shape != mat.shape) {
+      fail!(format!("Invalid matrix shapes: {}, {}", self.shape, mat.shape));
+    }
     unsafe {
       Mat::new_from_raw(arma_Mat_f32_add_Mat_f32(mat.raw, self.raw))
     }
   }
 
   fn do_sub(&self, mat : &Mat) -> Mat{
+    if (self.shape != mat.shape) {
+      fail!(format!("Invalid matrix shapes: {}, {}", self.shape, mat.shape));
+    }
     unsafe {
       Mat::new_from_raw(arma_Mat_f32_sub_Mat_f32(mat.raw, self.raw))
     }
   }
 
   fn do_mul(&self, mat : &Mat) -> Mat{
+    if (self.shape != mat.shape) {
+      fail!(format!("Invalid matrix shapes: {}, {}", self.shape, mat.shape));
+    }
     unsafe {
       Mat::new_from_raw(arma_Mat_f32_mul_Mat_f32(mat.raw, self.raw))
     }
   }
 
   fn do_div(&self, mat : &Mat) -> Mat{
+    if (self.shape != mat.shape) {
+      fail!(format!("Invalid matrix shapes: {}, {}", self.shape, mat.shape));
+    }
     unsafe {
       Mat::new_from_raw(arma_Mat_f32_div_Mat_f32(mat.raw, self.raw))
     }
@@ -272,6 +283,15 @@ mod test {
   fn mat_add_mat() {
     let ones = Mat::ones(10, 20);
     let other = Mat::ones(10, 20);
+    let new = ones + other;
+    assert_eq!(2f32, new.at((9,9)));
+  }
+
+  #[test]
+  #[should_fail]
+  fn mat_add_mat_invalid_shapes() {
+    let ones = Mat::ones(10, 20);
+    let other = Mat::ones(11, 20);
     let new = ones + other;
     assert_eq!(2f32, new.at((9,9)));
   }
