@@ -8,7 +8,7 @@ extern crate libc;
 
 use std::c_str::CString;
 use std::fmt;
-use libc::{c_uint, c_char, c_float, c_double};
+use libc::c_uint;
 use gen_ffi::*;
 
 mod gen_ffi;
@@ -64,11 +64,21 @@ impl Mat {
     }
   }
   /// Index the matrix by row and column
-  pub fn at(&self, row : uint, col : uint) -> f32 {
+  ///
+  /// Failure
+  ///
+  /// Fails if index is invalid.
+  pub fn at(&self, index : (uint, uint)) -> f32 {
+    let (r, c) = self.shape;
+    let (row, col) = index;
+    if (row >= r || r < 0 || col >= c || c < 0) {
+      fail!(format!("Index out of bounds - shape: {} bad index: {}", self.shape, index));
+    }
     unsafe {
       arma_Mat_f32_at(self.raw, row as c_uint, col as c_uint) as f32
     }
   }
+
 }
 
 /// Trait to enable operations with matrix
@@ -181,23 +191,23 @@ mod test {
   #[test]
   fn zeros() {
     let zeros = Mat::zeros(10, 20);
-    assert_eq!(0f32, zeros.at(0,0));
-    assert_eq!(0f32, zeros.at(9,15));
+    assert_eq!(0f32, zeros.at((0,0)));
+    assert_eq!(0f32, zeros.at((9,15)));
   }
 
   #[test]
   fn ones() {
     let ones = Mat::ones(10, 20);
-    assert_eq!(1f32, ones.at(0,0));
-    assert_eq!(1f32, ones.at(9,15));
+    assert_eq!(1f32, ones.at((0,0)));
+    assert_eq!(1f32, ones.at((9,15)));
   }
 
   #[test]
   fn eye() {
     let eye = Mat::eye(10, 10);
-    assert_eq!(1f32, eye.at(0,0));
-    assert_eq!(1f32, eye.at(3,3));
-    assert_eq!(0f32, eye.at(9,3));
+    assert_eq!(1f32, eye.at((0,0)));
+    assert_eq!(1f32, eye.at((3,3)));
+    assert_eq!(0f32, eye.at((9,3)));
   }
 
   #[test]
@@ -205,42 +215,42 @@ mod test {
     let randu = Mat::randu(10, 10);
     let randn = Mat::randn(10, 10);
     // Spot check, no understanding of distribution
-    assert!(randn.at(0,0) != randu.at(0,0));
-    assert!(randu.at(2,1) != randu.at(2,0));
-    assert!(randn.at(2,1) != randn.at(2,0));
-    assert!(randn.at(3,2) != randn.at(7,3));
-    assert!(randu.at(3,2) != randu.at(7,3));
+    assert!(randn.at((0,0)) != randu.at((0,0)));
+    assert!(randu.at((2,1)) != randu.at((2,0)));
+    assert!(randn.at((2,1)) != randn.at((2,0)));
+    assert!(randn.at((3,2)) != randn.at((7,3)));
+    assert!(randu.at((3,2)) != randu.at((7,3)));
   }
 
   #[test]
   fn mat_add_f32() {
     let ones = Mat::ones(10, 20);
     let new = ones + 1f32;
-    assert_eq!(2f32, new.at(9,15));
+    assert_eq!(2f32, new.at((9,15)));
     let second = new + 1f32;
-    assert_eq!(3f32, second.at(9,15));
-    assert_eq!(2f32, new.at(9,15));
+    assert_eq!(3f32, second.at((9,15)));
+    assert_eq!(2f32, new.at((9,15)));
   }
 
   #[test]
   fn mat_sub_f32() {
     let ones = Mat::ones(10, 20);
     let new = ones - 1f32;
-    assert_eq!(0f32, new.at(9,9));
+    assert_eq!(0f32, new.at((9,9)));
   }
 
   #[test]
   fn mat_div_f32() {
     let ones = Mat::ones(10, 20);
     let new = ones / 4f32;
-    assert_eq!(0.25f32, new.at(9,9));
+    assert_eq!(0.25f32, new.at((9,9)));
   }
 
   #[test]
   fn mat_mul_f32() {
     let ones = Mat::ones(10, 20);
     let new = ones * 4f32;
-    assert_eq!(4f32, new.at(9,9));
+    assert_eq!(4f32, new.at((9,9)));
   }
 
   #[test]
@@ -248,7 +258,7 @@ mod test {
     let ones = Mat::ones(10, 20);
     let other = Mat::ones(10, 20);
     let new = ones + other;
-    assert_eq!(2f32, new.at(9,9));
+    assert_eq!(2f32, new.at((9,9)));
   }
 
   #[test]
@@ -256,7 +266,7 @@ mod test {
     let ones = Mat::ones(10, 10);
     let other = Mat::ones(10, 10);
     let new = ones - other;
-    assert_eq!(0f32, new.at(9,9));
+    assert_eq!(0f32, new.at((9,9)));
   }
 
   #[test]
@@ -266,7 +276,7 @@ mod test {
     println!("{}", ones);
     println!("{}", other);
     let new = ones / other;
-    assert_eq!(0.5f32, new.at(9,4));
+    assert_eq!(0.5f32, new.at((9,4)));
   }
 
   #[test]
@@ -274,6 +284,20 @@ mod test {
     let ones = Mat::ones(10, 10) + 2f32;
     let other = Mat::ones(10, 10) + 1f32;
     let new = ones * other;
-    assert_eq!(6f32, new.at(9,4));
+    assert_eq!(6f32, new.at((9,4)));
+  }
+
+  #[test]
+  #[should_fail]
+  fn mat_at_col_out_of_bounds() {
+    let mat = Mat::ones(4, 9);
+    let _ = mat.at((2, 10));
+  }
+
+  #[test]
+  #[should_fail]
+  fn mat_at_row_out_of_bounds() {
+    let mat = Mat::ones(4, 9);
+    let _ = mat.at((7, 2));
   }
 }
