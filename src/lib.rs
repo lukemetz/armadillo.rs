@@ -70,7 +70,7 @@ impl Mat {
   pub fn at(&self, index : (uint, uint)) -> f32 {
     let (r, c) = self.shape;
     let (row, col) = index;
-    if (row >= r || r < 0 || col >= c || c < 0) {
+    if row >= r || col >= c {
       fail!(format!("Index out of bounds - shape: {} bad index: {}", self.shape, index));
     }
     unsafe {
@@ -84,9 +84,9 @@ impl Mat {
   ///
   /// Fails if matrix sizes are incompatible
   pub fn dot(&self, mat : &Mat) -> Mat {
-    let (ra, ca) = self.shape;
-    let (rb, cb) = mat.shape;
-    if (ca != rb) {
+    let (_, ca) = self.shape;
+    let (rb, _) = mat.shape;
+    if ca != rb {
         fail!(format!("Cannot multiply matrices of shape: {} and {}", self.shape, mat.shape));
     }
     unsafe {
@@ -131,7 +131,7 @@ impl MathWithMat for f32 {
 
 impl MathWithMat for Mat {
   fn do_add(&self, mat : &Mat) -> Mat{
-    if (self.shape != mat.shape) {
+    if self.shape != mat.shape {
       fail!(format!("Invalid matrix shapes: {}, {}", self.shape, mat.shape));
     }
     unsafe {
@@ -140,7 +140,7 @@ impl MathWithMat for Mat {
   }
 
   fn do_sub(&self, mat : &Mat) -> Mat{
-    if (self.shape != mat.shape) {
+    if self.shape != mat.shape {
       fail!(format!("Invalid matrix shapes: {}, {}", self.shape, mat.shape));
     }
     unsafe {
@@ -149,7 +149,7 @@ impl MathWithMat for Mat {
   }
 
   fn do_mul(&self, mat : &Mat) -> Mat{
-    if (self.shape != mat.shape) {
+    if self.shape != mat.shape {
       fail!(format!("Invalid matrix shapes: {}, {}", self.shape, mat.shape));
     }
     unsafe {
@@ -158,7 +158,7 @@ impl MathWithMat for Mat {
   }
 
   fn do_div(&self, mat : &Mat) -> Mat{
-    if (self.shape != mat.shape) {
+    if self.shape != mat.shape {
       fail!(format!("Invalid matrix shapes: {}, {}", self.shape, mat.shape));
     }
     unsafe {

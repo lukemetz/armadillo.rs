@@ -6,11 +6,9 @@ header = """
 rust_header = """
 extern crate libc;
 
-use std::c_str::CString;
-use libc::{c_uint, c_char, c_float, c_double};
+use libc::{c_uint, c_char, c_float};
 
 pub struct Matf32Raw;
-pub struct Mat64Raw;
 
 #[link(name = "carmadillo")]
 #[link(name = "armadillo")]
