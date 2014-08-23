@@ -14,8 +14,8 @@ extern crate libc;
 
 pub use mat::{Mat, MatrixFuncs};
 pub use matrixMath::OpsWithMatrix;
-pub use gen_ffi::Matf32Raw;
+pub use ffi::Matf32Raw;
 
-mod gen_ffi;
+mod ffi;
 mod matrixMath;
 mod mat;

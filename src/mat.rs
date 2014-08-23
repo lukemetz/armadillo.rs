@@ -1,7 +1,8 @@
-use gen_ffi::*;
+use ffi::*;
 use std::c_str::CString;
 use libc::c_uint;
 use std::fmt;
+use std::mem;
 
 pub struct Mat {
   pub raw : *mut Matf32Raw,
@@ -59,19 +60,38 @@ impl Mat {
 
 // This needs to be for base type specific functions
 impl Mat {
-  /// Index the matrix by row and column
-  ///
-  /// Failure
-  ///
-  /// Fails if index is invalid.
-  pub fn at(&self, index : (uint, uint)) -> f32 {
+  fn fail_at_bad_index(&self, index : &(uint, uint)) {
     let (r, c) = self.shape;
-    let (row, col) = index;
+    let &(row, col) = index;
     if row >= r || col >= c {
       fail!(format!("Index out of bounds - shape: {} bad index: {}", self.shape, index));
     }
+  }
+
+  /// Index the matrix by row and column
+  ///
+  /// # Failure
+  ///
+  /// Fails if index is invalid.
+  pub fn at(&self, index : (uint, uint)) -> f32 {
+    self.fail_at_bad_index(&index);
+    let (row, col) = index;
     unsafe {
       arma_Mat_f32_at(self.raw, row as c_uint, col as c_uint) as f32
+    }
+  }
+
+  /// Index the matrix by row and column returning a mutable reference
+  ///
+  /// # Failure
+  ///
+  /// Fails if index is invalid.
+  pub fn at_mut(&mut self, index : (uint, uint)) -> &mut f32 {
+    self.fail_at_bad_index(&index);
+    let (row, col) = index;
+    unsafe {
+      let ptr = arma_Mat_f32_at_ptr(self.raw, row as c_uint, col as c_uint) as *mut f32;
+      mem::transmute(ptr)
     }
   }
 }
@@ -86,6 +106,7 @@ pub trait MatrixFuncs {
 }
 
 impl MatrixFuncs for Mat {
+  /// # Failure
   fn dot(&self, mat : &Mat) -> Mat{
     let (_, ca) = self.shape;
     let (rb, _) = mat.shape;
@@ -191,5 +212,16 @@ mod test_mat_funcs {
   fn mat_at_row_out_of_bounds() {
     let mat = Mat::ones(4, 9);
     let _ = mat.at((7, 2));
+  }
+
+  #[test]
+  fn mat_at_mut() {
+    let mut mat = Mat::ones(4, 9);
+    assert_eq!(mat.at((1, 2)), 1f32);
+    assert_eq!(mat.at((2, 2)), 1f32);
+    *mat.at_mut((1, 2)) = 2f32;
+    *mat.at_mut((2, 2)) = 3f32;
+    assert_eq!(mat.at((1, 2)), 2f32);
+    assert_eq!(mat.at((2, 2)), 3f32);
   }
 }

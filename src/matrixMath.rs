@@ -1,4 +1,4 @@
-use gen_ffi::*;
+use ffi::*;
 use mat::Mat;
 
 /// Trait to enable operation overloading with Mat
