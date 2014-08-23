@@ -1,8 +1,7 @@
 use ffi::*;
 use std::c_str::CString;
 use libc::c_uint;
-use std::fmt;
-use std::mem;
+use std::{fmt, mem, cmp};
 
 pub struct Mat {
   pub raw : *mut Matf32Raw,
@@ -139,6 +138,17 @@ impl fmt::Show for Mat {
   }
 }
 
+impl cmp::PartialEq for Mat {
+  fn eq(&self, other: &Mat) -> bool {
+    if self.shape != other.shape {
+      fail!(format!("Invalid equality check. Matrix different shapes: {} vs {}", self.shape, index));
+    }
+    unsafe {
+      arma_Mat_f32_eq(self.raw, other.raw) != 0
+    }
+  }
+}
+
 #[cfg(test)]
 mod test_mat {
   use super::{Mat};
@@ -177,7 +187,6 @@ mod test_mat {
     assert!(randu.at((3,2)) != randu.at((7,3)));
   }
 }
-
 
 #[cfg(test)]
 mod test_mat_funcs {
@@ -223,5 +232,32 @@ mod test_mat_funcs {
     *mat.at_mut((2, 2)) = 3f32;
     assert_eq!(mat.at((1, 2)), 2f32);
     assert_eq!(mat.at((2, 2)), 3f32);
+  }
+}
+
+#[cfg(test)]
+mod test_mat_cmp {
+  use super::{Mat};
+
+  #[test]
+  fn mat_eq_mat() {
+    let mat = Mat::ones(4,4);
+    let mat2 = Mat::ones(4,4);
+    assert_eq!(mat, mat2);
+  }
+
+  #[test]
+  fn mat_neq_mat() {
+    let mat = Mat::ones(4,4);
+    let mat2 = Mat::ones(4,4)+1f32;
+    assert!(mat != mat2);
+  }
+
+  #[test]
+  #[should_fail]
+  fn mat_eq_wrong_size() {
+    let mat = Mat::ones(4,4);
+    let mat2 = Mat::ones(4,5);
+    assert_eq!(mat, mat2);
   }
 }

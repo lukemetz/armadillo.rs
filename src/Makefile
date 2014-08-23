@@ -4,7 +4,7 @@ CXXFLAGS = -fPIC -O3 -larmadillo
 
 .PHONY: all
 all: clean libcarmadillo.so
-	cp ../libcarmadillo.so ../target/test/
+	cp ../libcarmadillo.so ../target/
 
 libcarmadillo.so: f32_armadillo.cpp
 	$(CXX) $(CXXFLAGS) -o ../libcarmadillo.so f32_armadillo.cpp --shared
