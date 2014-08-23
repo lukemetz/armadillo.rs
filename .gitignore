@@ -24,6 +24,3 @@ target
 
 # Cargo
 Cargo.lock
-
-# Generated
-src/gen_*
