@@ -161,8 +161,6 @@ mod test_ops_with_Mat {
   fn mat_div_mat() {
     let ones = Mat::ones(10, 10)+1f32;
     let other = Mat::ones(10, 10)+3f32;
-    println!("{}", ones);
-    println!("{}", other);
     let new = ones / other;
     assert_eq!(0.5f32, new.at((9,4)));
   }
