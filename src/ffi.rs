@@ -5,9 +5,9 @@ use libc::{c_uint, c_char, c_float};
 #[repr(C)]
 pub struct Matf32Raw;
 
-#[link(name = "carmadillo")]
+#[link(name = "carmadillo", kind="static")]
 #[link(name = "armadillo")]
-
+#[link(name = "stdc++")]
 extern {
     pub fn arma_Mat_f32_zeros(r : c_uint, c : c_uint) -> *mut Matf32Raw;
     pub fn arma_Mat_f32_ones(r : c_uint, c : c_uint) -> *mut Matf32Raw;

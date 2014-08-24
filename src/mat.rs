@@ -141,7 +141,7 @@ impl fmt::Show for Mat {
 impl cmp::PartialEq for Mat {
   fn eq(&self, other: &Mat) -> bool {
     if self.shape != other.shape {
-      fail!(format!("Invalid equality check. Matrix different shapes: {} vs {}", self.shape, index));
+      fail!(format!("Invalid equality check. Matrix different shapes: {} vs {}", self.shape, other.shape));
     }
     unsafe {
       arma_Mat_f32_eq(self.raw, other.raw) != 0
