@@ -8,5 +8,6 @@ script:
   - cargo build
   - cargo test
   - cd example
+  - ls
   - rustc example.rs -L ../target
   - ./example
