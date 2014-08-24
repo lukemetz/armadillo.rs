@@ -32,4 +32,5 @@ pub fn main() {
   assert_eq!(mat.at((0,0)), 1.0);
   *mat.at_mut((0, 0)) = 2.0;
   assert_eq!(mat.at((0,0)), 2f32);
+}
 ```
