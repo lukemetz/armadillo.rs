@@ -21,6 +21,7 @@
 *.app
 *.rlib
 target
+example/example
 
 # Cargo
 Cargo.lock

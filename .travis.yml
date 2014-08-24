@@ -13,3 +13,6 @@ install:
 script:
   - cargo build
   - cargo test
+  - cd example
+  - rustc example.rs -L ../target
+  - ./example
