@@ -4,9 +4,6 @@ install:
   - tar -xvf armadillo-4.400.1.tar.gz
   - cd armadillo-4.400.1
   - ./configure && sudo make install
-  - cd ..
-  - cd armadillo.rs
-  - LD_LIBRARY_PATH=$LD_LIBRARY_PATH:.
 script:
   - cargo build
   - cargo test
