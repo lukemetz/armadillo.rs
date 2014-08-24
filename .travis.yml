@@ -4,10 +4,10 @@ install:
   - tar -xvf armadillo-4.400.1.tar.gz
   - cd armadillo-4.400.1
   - ./configure && sudo make install
+  - cd ..
 script:
   - cargo build
   - cargo test
   - cd example
-  - ls
   - rustc example.rs -L ../target
   - ./example
