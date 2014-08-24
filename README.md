@@ -1,33 +1,35 @@
-Rustpy
-=====
+Armadillo.rs
+============
 
-A simple library to allow for easy use of python from rust.
+A wrapper around [armadillo]('http://arma.sourceforge.net'), a high performance c++ matrix library.
+Currently this is a small subset of the library, just enough to do
+simple construction and math. In addition to this, the only supported
+type is `f32` matrices.
 
-This library is meant to be middle ware for users wanting to use
-python libraries from rust. It allows users to quickly use existing
-tools and get working on interesting things fast!
+As always, pull requests are welcome!
 
-See [pysmtplib.rs](https://github.com/lukemetz/pysmtplib.rs) for an
-example of how to bind enough smtplib to send emails.
-
-
-For more documentation, run `rustdoc src/rustpy.rs` and look at
-doc/rustpy/index.html. Pull requests are welcome!
+For more documentation, run `cargo doc` and look at target/doc/armadillo/index.html.
 
 ```rust
-extern crate rustpy;
-use rustpy::{PyType, PyState};
+extern crate armadillo;
+use armadillo::{Mat, MatrixFuncs};
 
-fn main() {
-  let py = PyState::new();
-  let module = py.get_module("math").unwrap();
-  let func = module.get_func("sqrt").unwrap();
-  let args = (144f32, ).to_py_object(&py).unwrap();
-  let untyped_res = func.call(&args).unwrap();
-  let result = py.from_py_object::<f32>(untyped_res).unwrap();
-  assert_eq!(result, 12f32);
-}
+pub fn main() {
+  let zeros = Mat::zeros(4, 4);
+  let twos = Mat::ones(4, 4) * 2f32;
+  let ones = Mat::ones(4, 4);
+  assert_eq!(ones, zeros + 1f32);
+  assert_eq!(ones, zeros * 3f32 + ones);
+
+  // use `*` is element wise multiplication
+  assert_eq!(twos * twos, twos + 2f32);
+
+  let eye = Mat::eye(4, 4);
+  // use `dot` for matrix multiplication
+  assert_eq!(twos.dot(&eye), twos);
+
+  let mut mat = Mat::ones(4, 4);
+  assert_eq!(mat.at((0,0)), 1.0);
+  *mat.at_mut((0, 0)) = 2.0;
+  assert_eq!(mat.at((0,0)), 2f32);
 ```
-Important note: Only create one instance of PyState at a time.
-On construction, it grabs a global lock to prevent more than one thread from
-interacting with the interpreter thus making it very easy to deadlock.
