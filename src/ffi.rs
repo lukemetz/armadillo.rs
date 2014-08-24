@@ -29,5 +29,6 @@ extern {
     pub fn arma_Mat_f32_at_ptr(m : *mut Matf32Raw, r : c_uint, c : c_uint) -> *mut c_float;
     pub fn arma_Mat_f32_n_rows(m : *mut Matf32Raw) -> c_uint;
     pub fn arma_Mat_f32_n_cols(m : *mut Matf32Raw) -> c_uint;
+    pub fn arma_Mat_f32_data(m : *mut Matf32Raw) -> *mut c_float;
     pub fn arma_Mat_f32_eq(n : *mut Matf32Raw, m : *mut Matf32Raw) -> c_uint;
 }

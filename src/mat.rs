@@ -93,6 +93,11 @@ impl Mat {
       mem::transmute(ptr)
     }
   }
+
+  /// Get the data pointer
+  pub unsafe fn data_ptr(&self) -> *mut f32 {
+    arma_Mat_f32_data(self.raw)
+  }
 }
 
 pub trait MatrixFuncs {
@@ -191,6 +196,7 @@ mod test_mat {
 #[cfg(test)]
 mod test_mat_funcs {
   use super::{Mat, MatrixFuncs};
+  use std::mem;
 
   #[test]
   fn mat_dot() {
@@ -232,6 +238,15 @@ mod test_mat_funcs {
     *mat.at_mut((2, 2)) = 3f32;
     assert_eq!(mat.at((1, 2)), 2f32);
     assert_eq!(mat.at((2, 2)), 3f32);
+  }
+
+  #[test]
+  fn mat_data_ptr_smoke() {
+    let mut mat = Mat::ones(4, 9);
+    unsafe {
+      let data = mat.data_ptr();
+      assert!(data != mem::transmute(0i));
+    }
   }
 }
 

@@ -160,6 +160,10 @@ extern "C" {
     return m->n_cols;
   }
 
+  float * arma_Mat_f32_data(Mat_f32 * m) {
+    return m->data;
+  }
+
   unsigned int arma_Mat_f32_eq(Mat_f32 * n, Mat_f32 * m) {
     arma::Mat<float> matN(n->data, n->n_rows, n->n_cols, false);
     arma::Mat<float> matM(m->data, m->n_rows, m->n_cols, false);
