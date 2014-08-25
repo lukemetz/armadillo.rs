@@ -14,6 +14,7 @@ extern {
     pub fn arma_Mat_f32_randu(r : c_uint, c : c_uint) -> *mut Matf32Raw;
     pub fn arma_Mat_f32_eye(r : c_uint, c : c_uint) -> *mut Matf32Raw;
     pub fn arma_Mat_f32_randn(r : c_uint, c : c_uint) -> *mut Matf32Raw;
+    pub fn arma_Mat_f32_make_raw(r : c_uint, c : c_uint, data : *mut c_float) -> *mut Matf32Raw;
     pub fn arma_Mat_f32_add_Mat_f32(m : *mut Matf32Raw, n : *mut Matf32Raw) -> *mut Matf32Raw;
     pub fn arma_Mat_f32_sub_Mat_f32(m : *mut Matf32Raw, n : *mut Matf32Raw) -> *mut Matf32Raw;
     pub fn arma_Mat_f32_mul_Mat_f32(m : *mut Matf32Raw, n : *mut Matf32Raw) -> *mut Matf32Raw;

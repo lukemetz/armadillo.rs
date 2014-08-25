@@ -50,6 +50,11 @@ extern "C" {
     return new Mat_f32(m);
   }
 
+  Mat_f32 * arma_Mat_f32_make_raw(unsigned int r, unsigned int c, float* data) {
+    arma::Mat<float> m(data, r, c, false);
+    return new Mat_f32(m);
+  }
+
   Mat_f32 * arma_Mat_f32_add_Mat_f32(Mat_f32 * m, Mat_f32 * n) {
     arma::Mat<float> m_mat(m->data, m->n_rows, m->n_cols, false);
     arma::Mat<float> n_mat(n->data, n->n_rows, n->n_cols, false);

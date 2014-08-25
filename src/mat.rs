@@ -10,6 +10,14 @@ pub struct Mat {
 
 
 impl Mat {
+  /// Unsafe constructor from raw buffers. Use this when interfacing
+  /// With external library. Note the data pointer should no longer be used
+  /// after passing it into this function. The Mat takes care of it and removing it.
+  pub unsafe fn new_from_ptr(rows : uint, cols : uint, data : *mut f32) -> Mat{
+    let c_data = mem::transmute(data);
+    Mat::new_from_raw(arma_Mat_f32_make_raw(rows as c_uint, cols as c_uint, c_data))
+  }
+
   /// Mostly internal function to cunstruct a matrix off of
   /// a c pointer
   pub fn new_from_raw(raw : *mut Matf32Raw) -> Mat {
@@ -197,6 +205,7 @@ mod test_mat {
 mod test_mat_funcs {
   use super::{Mat, MatrixFuncs};
   use std::mem;
+  use libc::funcs::c95::stdlib::malloc;
 
   #[test]
   fn mat_dot() {
@@ -242,10 +251,34 @@ mod test_mat_funcs {
 
   #[test]
   fn mat_data_ptr_smoke() {
-    let mut mat = Mat::ones(4, 9);
+    let mat = Mat::ones(4, 9);
     unsafe {
       let data = mat.data_ptr();
       assert!(data != mem::transmute(0i));
+    }
+  }
+
+  #[test]
+  fn mat_new_from_ptr() {
+    unsafe {
+      // This needs to be allocated and not automatically cleaned up as the matrix takes care of that.
+      let ptr : *mut f32 = mem::transmute(malloc((mem::size_of::<f32>() * 9) as u64));
+      let array : &mut [f32, ..9] = mem::transmute(ptr);
+      array[0] = 0f32;
+      array[1] = 1f32;
+      array[2] = 2f32;
+      array[3] = 3f32;
+      array[4] = 4f32;
+      array[5] = 5f32;
+      array[6] = 4f32;
+      array[7] = 4f32;
+      array[8] = 4f32;
+      let mat = Mat::new_from_ptr(3, 3, ptr);
+      assert_eq!(mat.at((0,0)), 0f32);
+      assert_eq!(mat.at((1,0)), 1f32);
+      assert_eq!(mat.at((2,0)), 2f32);
+      assert_eq!(mat.at((0,1)), 3f32);
+      assert_eq!(mat.at((1,1)), 4f32);
     }
   }
 }
