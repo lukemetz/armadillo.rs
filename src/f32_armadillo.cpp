@@ -135,10 +135,11 @@ extern "C" {
   const char * arma_Mat_f32_print(Mat_f32 * m) {
     arma::Mat<float> mat(m->data, m->n_rows, m->n_cols, false);
     std::stringstream ss;
-    ss << mat;
+    ss << mat << '\0';
     std::string s = ss.str();
     char * out = new char[s.size() + 1];
     s.copy(out, s.size());
+    s[s.size()] = '\0';
     return out;
   }
 

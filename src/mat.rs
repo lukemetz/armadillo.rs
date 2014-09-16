@@ -1,7 +1,7 @@
 use ffi::*;
 use std::c_str::CString;
 use libc::c_uint;
-use std::{fmt, mem, cmp};
+use std::{fmt, mem, cmp, ptr};
 
 pub struct Mat {
   pub raw : *mut Matf32Raw,
@@ -162,9 +162,16 @@ impl cmp::PartialEq for Mat {
   }
 }
 
+impl Clone for Mat {
+  fn clone(&self) -> Mat {
+    self + 0.0f32
+  }
+}
+
 #[cfg(test)]
 mod test_mat {
   use super::{Mat};
+  use std::mem;
 
   #[test]
   fn zeros() {
@@ -198,6 +205,16 @@ mod test_mat {
     assert!(randn.at((2,1)) != randn.at((2,0)));
     assert!(randn.at((3,2)) != randn.at((7,3)));
     assert!(randu.at((3,2)) != randu.at((7,3)));
+  }
+
+  #[test]
+  fn test_clone() {
+    let ones = Mat::ones(10, 10);
+    let cloned = ones.clone();
+    assert_eq!(ones, cloned);
+    mem::drop(ones);
+    let ones = Mat::ones(10, 10);
+    assert_eq!(ones, cloned);
   }
 }
 
